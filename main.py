@@ -85,6 +85,8 @@ y_data256 = y_data256.astype(int)
 
 if not os.path.exists('csv'):
     os.makedirs('csv')
+if not os.path.exists('xlsx'):
+    os.makedirs('xlsx')
 # рассчет и сохранение матрицы ошибок предсказаных значений меток
 matrix_error = y_data256 - csv_np
 df_matrix_error = pd.DataFrame(matrix_error)
