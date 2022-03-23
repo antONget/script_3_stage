@@ -50,9 +50,9 @@ flag = 1  # обучаем(1) или используем готовую сет�
 if flag == 1:
     model = []
 else:
-    with open('model_80.data', 'rb') as filehandle:
+    with open('model.data', 'rb') as filehandle:
         # сохраняем данные как двоичный поток
-        model_80 = pickle.load(filehandle)
+        model = pickle.load(filehandle)
 for i in range(256):
     print(i)
     # iri = x_data256[y_data256[i, :] == 1, i, :]   # данные с сигналом
@@ -66,7 +66,7 @@ for i in range(256):
                         epochs=10, verbose=0)
         model.append(autoencoder)
     else:
-        autoencoder = model_80[i]
+        autoencoder = model[i]
     # рассчет ошибки восстановления фона
     pred_norm = autoencoder.predict(x_train)
     # pred_norm = x_train - pred_norm
