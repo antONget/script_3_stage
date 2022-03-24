@@ -49,22 +49,24 @@ count_train = 900
 flag = 1  # обучаем(1) или используем готовую сеть(0)
 if flag == 1:
     model = []
-else:
-    with open('model_80.data', 'rb') as filehandle:
+# else:
+#     with open('model_80.data', 'rb') as filehandle:
         # сохраняем данные как двоичный поток
-        model_80 = pickle.load(filehandle)
+#         model_80 = pickle.load(filehandle)
 for i in range(256):
     print(i)
     # iri = x_data256[y_data256[i, :] == 1, i, :]   # данные с сигналом
     # norm = x_data256[y_data256[i, :] == 0, i, :]  # данные с фоном
     x_train = x_data256_big[:count_train, i, :]   # обучающие данные
     if flag == 1:
+        if not os.path.exists('new_models_slice'):
+            os.makedirs('new_models_slice')
         encoder, decoder, autoencoder = create_dense_ae()   # формируем сеть и обучаем ее
         autoencoder.compile(optimizer='adam', loss='binary_crossentropy')
         autoencoder.fit(x_train, x_train,
                         batch_size=10,
                         epochs=10, verbose=0)
-        autoencoder.save('models_slice/new_model_slice'+str(i)+'.h5')
+        autoencoder.save('new_models_slice/model'+str(i)+'.h5')
     else:
         # autoencoder = model_80[i]
         autoencoder = load_model('model_slice/model'+str(i)+'.h5')
