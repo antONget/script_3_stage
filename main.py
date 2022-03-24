@@ -5,7 +5,7 @@ from openpyxl import Workbook
 import csv
 import pickle
 from sklearn.metrics import confusion_matrix
-from keras.models import Model
+from keras.models import Model, load_model
 from keras.layers import Input, Dense
 import os
 
@@ -50,9 +50,9 @@ flag = 1  # обучаем(1) или используем готовую сет�
 if flag == 1:
     model = []
 else:
-    with open('model.data', 'rb') as filehandle:
+    with open('model_80.data', 'rb') as filehandle:
         # сохраняем данные как двоичный поток
-        model = pickle.load(filehandle)
+        model_80 = pickle.load(filehandle)
 for i in range(256):
     print(i)
     # iri = x_data256[y_data256[i, :] == 1, i, :]   # данные с сигналом
@@ -64,9 +64,10 @@ for i in range(256):
         autoencoder.fit(x_train, x_train,
                         batch_size=10,
                         epochs=10, verbose=0)
-        model.append(autoencoder)
+        autoencoder.save('models_slice/new_model_slice'+str(i)+'.h5')
     else:
-        autoencoder = model[i]
+        # autoencoder = model_80[i]
+        autoencoder = load_model('model_slice/model'+str(i)+'.h5')
     # рассчет ошибки восстановления фона
     pred_norm = autoencoder.predict(x_train)
     # pred_norm = x_train - pred_norm
@@ -144,8 +145,7 @@ print('Правильное обнаружение: ' + str(round((tp+tn) / len(
 print('Ложная тревога: ' + str(round(fp / len(y_pred)*100, 2))+'%')
 print('Пропуск цели: ' + str(round(fn / len(y_pred)*100, 2))+'%')
 
-# if not os.path.exists('xlsx'):
-#     os.makedirs('xlsx')
+
 # # сохранение преобразованного массива предсказанных меток
 # df_solution = pd.DataFrame(solution)
 # df_solution.to_csv('csv/df_solution.csv')
@@ -179,3 +179,4 @@ print('Пропуск цели: ' + str(round(fn / len(y_pred)*100, 2))+'%')
 #         # сохраняем данные как двоичный поток
 #         pickle.dump(model, filehandle)
 # print('всё')
+
